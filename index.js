@@ -6,6 +6,7 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(cors())
+app.use(express.static('build'))
 
 morgan.token('content', (req, res) => {
     return JSON.stringify(req.body)
@@ -40,6 +41,10 @@ let persons = [
         id: 5
     }
 ]
+
+app.get('/', (req, res) => {
+    res.sendFile('build/index.html')
+})
 
 app.get('/api/persons', (req, res) => {
     res.json(persons)
