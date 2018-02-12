@@ -62,7 +62,7 @@ app.put('/api/persons/:id', (req, res) => {
     }
 
     Person
-        .findOneAndUpdate({_id: req.params.id}, person, { new: true })
+        .findOneAndUpdate({ _id: req.params.id }, person, { new: true })
         .then(updatedPerson => {
             res.json(Person.format(updatedPerson))
         })
@@ -86,15 +86,23 @@ app.post('/api/persons', (req, res) => {
         return res.status(400).json({ error: 'number is missing!' })
     }
 
-    const person = new Person({
-        name: name,
-        number: number
-    })
-
-    person
-        .save()
+    Person
+        .find({ name: name })
         .then(result => {
-            res.json(Person.format(result))
+            if (result.length > 0) {
+                return res.status(409).json({ error: 'name is already in list!' })
+            } else {
+                const person = new Person({
+                    name: name,
+                    number: number
+                })
+
+                person
+                    .save()
+                    .then(result => {
+                        res.json(Person.format(result))
+                    })
+            }
         })
 })
 
